@@ -7,7 +7,7 @@ import java.io.*;
 public class Final_ProjectSCORE extends Applet implements ActionListener, KeyListener, MouseMotionListener, MouseListener
 {
     //CHANGE THIS TO THE FOLDER'S ADDRESS IN ORDER TO SAVE SCORE
-    String path = "C:\\Users\\zaeem\\Downloads\\G12 FELINA\\highscore.txt";
+    String path = " ";
     
     //BUTTONS
     Button button1;
