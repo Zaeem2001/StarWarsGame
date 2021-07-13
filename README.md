@@ -13,7 +13,7 @@ The set up for this project is fairly easy:
    
    *NOTE: You must run the progam with an older Java since applet's only work with jdk-8 and below. I'd recommend the "ReadyToProgram" IDE if you are not a programmer and simply want to play the game.*
    
-2. Follow <a href="https://drive.google.com/drive/folders/1z-X09ZHRQ-5biIMKvnJcdgYUXVnU3t4M?usp=sharing" target="_blank">this link</a> to a folder of the game's assets and  
+2. Follow <a target="_blank" href="https://drive.google.com/drive/folders/1z-X09ZHRQ-5biIMKvnJcdgYUXVnU3t4M?usp=sharing">this link</a> to a folder of the game's assets and  
    download them. 
    
 3. Place the game's code (from step 1) in the same folder as the assets.
