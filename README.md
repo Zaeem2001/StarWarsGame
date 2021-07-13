@@ -13,13 +13,21 @@ The set up for this project is fairly easy:
    
    *NOTE: You must run the progam with an older Java since applet's only work with jdk-8 and below. I'd recommend the "ReadyToProgram" IDE if you are not a programmer and simply want to play the game.*
    
-2. Follow <a target="_blank" href="https://drive.google.com/drive/folders/1z-X09ZHRQ-5biIMKvnJcdgYUXVnU3t4M?usp=sharing">this link</a> to a folder of the game's assets and  
-   download them. 
+2. Follow <a target="_blank" href="https://drive.google.com/drive/folders/1z-X09ZHRQ-5biIMKvnJcdgYUXVnU3t4M?usp=sharing">this link</a> to a folder of the game's assets and download them. 
    
 3. Place the game's code (from step 1) in the same folder as the assets.
 
 4. Open the game's code and at the very beginning edit the CLASSNAME and the "path" variable.
    - change the CLASSNAME to match the name of the class you created with your IDE
    - change the "path" to the address of the "highscore.txt" file in the folder in which the game is saved.
+
+### How to Play
+
+1. Run the program to open up an applet window that will display the game.
+
+2. The first thing you'll see is the menu screen
+   <img src="C:\\Users\\zaeem\\Downloads\\menu.png" alt:"menu"> 
+
+
 
 
