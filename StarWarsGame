@@ -1,0 +1,1237 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.applet.*;
+import java.io.*;
+
+public class Final_ProjectSCORE extends Applet implements ActionListener, KeyListener, MouseMotionListener, MouseListener
+{
+    //CHANGE THIS TO THE FOLDER'S ADDRESS IN ORDER TO SAVE SCORE
+    String path = "C:\\Users\\zaeem\\Downloads\\G12 FELINA\\highscore.txt";
+    
+    //BUTTONS
+    Button button1;
+    Button button2;
+    Button button3;
+    Button button4;
+    Button button5;
+    Button button6;
+
+    //TEXT
+    TextField prompt;
+
+    //BUFFER
+    Image backbuffer;
+    Graphics backg;
+    int width = 800;
+    int height = 800;
+
+    //TIMER
+    Timer timer;
+    int i = 0;
+    int iframe = 0;
+    int j = 0;
+    int k = 0;
+    int t = 0; //tie fighter counter
+
+    //mouse
+    int xpos;
+    int ypos;
+
+    //BACKGROUND
+    Image background;
+    int by = 0;
+    int speed = 3;
+
+    Image keys;
+
+    //SHIPS
+    Rectangle Srect;
+    int ship = 0; //chooses ship (0 = original, 1 = milano, etc)
+    int lives;
+    Image normalship;
+    Image falcon;
+    Image xwing;
+    Image normalshipI;
+    Image falconI;
+    Image xwingI;
+
+    //POWERUPS
+    Image hearts;
+    Image healthPU;
+
+    int hx = (int) (Math.random () * 800);
+    int hxdir = 1;
+    int hy = -2000;
+    boolean Hvisible = true;
+    Rectangle Hrect;
+
+    Image shieldPU;
+    Image shield;
+
+    int sx = (int) (Math.random () * 800);
+    int sxdir = -1;
+    int sy = -10000;
+    boolean SHvisible = true;
+    boolean SHactive = false;
+    int s = 0;
+    Rectangle SHrect;
+
+
+    //LASER
+    int Lx[] = new int [15];
+    int Ly[] = new int [15];
+    boolean fire = false;
+    boolean Lvisible[] = new boolean [15];
+    Rectangle Lrect[] = new Rectangle [15];
+    Image laser;
+    int ammo = 10;
+
+    //ENEMIES
+    Rectangle Trect[] = new Rectangle [20];
+    boolean Tvisible[] = new boolean [20];
+    Image tie;
+    Image texplosion;
+    int Tx[] = new int [20];
+    int Ty[] = new int [20];
+
+    Rectangle Brect;
+    boolean Bvisible = true;
+    Image bomber;
+    int bombx = (int) (Math.random () * 800 + 1200);
+    int bomby = (int) (Math.random () * -400 - 200);
+
+    Rectangle ELrect;
+    Image laserRcharge;
+    Image laserLcharge;
+    Image laserRfire;
+    Image laserLfire;
+    Image Elaser;
+    Image warning;
+    int ELy = 300;
+    boolean ELdown = true;
+    boolean ELfire = false;
+    int ELtimer = 0;
+
+    //SCORE
+    int score = 0;
+    int oldScore = 0;
+    int d; //difficulty
+    String name;
+    String Hname[] = new String [10];
+    int Hscore[] = new int [10];
+    int level = 1;
+
+    //MENUS
+    int start = 0;
+    boolean shipMenu = false;
+    boolean gameover = false;
+
+    int tips = (int) (Math.random () * 7);
+    Image yoda;
+    Image cloud;
+
+    //AUDIO
+    AudioClip tryagain;
+    AudioClip titleMusic;
+    AudioClip gameMusic;
+    AudioClip gameoverMusic;
+    AudioClip windsfx;
+    AudioClip TFsfx;
+    AudioClip blastersfx;
+    AudioClip lasersfx;
+    AudioClip astro;
+
+    public void init ()
+    {
+        setSize (800, 800);
+
+        //Listeners+timers
+        addMouseMotionListener (this);
+        addMouseListener (this);
+        addKeyListener (this);
+        timer = new Timer (10, this);
+
+        //Buffer Code
+        backbuffer = createImage (width, height);
+        backg = backbuffer.getGraphics ();
+
+        //buttons
+        this.setLayout (null); //set layout manager to null here
+
+        button1 = new Button ("Play");
+        this.add (button1);
+        button1.setBounds (375, 350, 50, 50);
+        button1.addActionListener (this);
+
+        button2 = new Button ("Choose Ship");
+        this.add (button2);
+        button2.setBounds (350, 450, 100, 50);
+        button2.addActionListener (this);
+
+        //highscore
+        prompt = new TextField (10);
+        prompt.setBounds (390, 380, 200, 25);
+        this.add (prompt);
+        prompt.addActionListener (this);
+        prompt.setVisible (false);
+
+        button3 = new Button ("Enter");
+        this.add (button3);
+        button3.setBounds (350, 450, 100, 50);
+        button3.addActionListener (this);
+        button3.setVisible (false);
+
+        button4 = new Button ("Do Again?");
+        this.add (button4);
+        button4.setBounds (350, 510, 100, 50);
+        button4.addActionListener (this);
+        button4.setVisible (false);
+
+        button5 = new Button ("Highscores");
+        this.add (button5);
+        button5.setBounds (350, 550, 100, 50);
+        button5.addActionListener (this);
+        button5.setVisible (true);
+
+        button6 = new Button ("Back to Menu");
+        this.add (button6);
+        button6.setBounds (350, 650, 100, 50);
+        button6.addActionListener (this);
+        button6.setVisible (false);
+
+        //IMAGES--------------------------------------------------------------------------------------------------------------------------
+        background = getImage (getDocumentBase (), "background.png");
+        normalship = getImage (getDocumentBase (), "default.png");
+        falcon = getImage (getDocumentBase (), "falcon.png");
+        xwing = getImage (getDocumentBase (), "xwing.png");
+        normalshipI = getImage (getDocumentBase (), "default.gif"); //iframe sprites
+        falconI = getImage (getDocumentBase (), "falcon.gif");
+        xwingI = getImage (getDocumentBase (), "xwing.gif");
+        keys = getImage (getDocumentBase (), "keys.png");
+        laser = getImage (getDocumentBase (), "laser.gif");
+        hearts = getImage (getDocumentBase (), "lives.gif");
+
+        tie = getImage (getDocumentBase (), "tie.png");
+        texplosion = getImage (getDocumentBase (), "texplosion.gif");
+
+        bomber = getImage (getDocumentBase (), "bomber.png");
+
+        laserRcharge = getImage (getDocumentBase (), "starweaponcharge.gif");
+        laserLcharge = getImage (getDocumentBase (), "starweaponcharge2.gif");
+        laserRfire = getImage (getDocumentBase (), "starweaponfire.gif");
+        laserLfire = getImage (getDocumentBase (), "starweaponfire2.gif");
+        Elaser = getImage (getDocumentBase (), "starweaponlaser.png");
+        warning = getImage (getDocumentBase (), "warning.png");
+
+        yoda = getImage (getDocumentBase (), "yoda.png");
+        cloud = getImage (getDocumentBase (), "cloud.png");
+
+        healthPU = getImage (getDocumentBase (), "lifeup.png");
+        shieldPU = getImage (getDocumentBase (), "shieldup.png");
+        shield = getImage (getDocumentBase (), "shield.png");
+
+        //SFX-----------------------------------------------------------------------------------------------------------------------------
+        tryagain = getAudioClip (getDocumentBase (), "tryagain.wav");
+        titleMusic = getAudioClip (getDocumentBase (), "titlemusic.wav");
+        gameMusic = getAudioClip (getDocumentBase (), "gamemusic.wav");
+        gameoverMusic = getAudioClip (getDocumentBase (), "gameover.wav");
+        windsfx = getAudioClip (getDocumentBase (), "wind.wav");
+        TFsfx = getAudioClip (getDocumentBase (), "TFEngine.wav");
+        blastersfx = getAudioClip (getDocumentBase (), "blastersfx.wav");
+        lasersfx = getAudioClip (getDocumentBase (), "lasersfx.wav");
+        astro = getAudioClip (getDocumentBase (), "astro.wav");
+
+        for (t = 0 ; t < 7 ; t++) //initialize position of tie fighters
+        {
+            Tx [t] = (int) (Math.random () * 550 + 150);
+            Ty [t] = (int) (Math.random () * -400 - 600);
+            Tvisible [t] = true;
+        }
+    }
+
+
+    //MOUSE-------------------------------------------------------------------------------------------------------------------------------
+    public void mouseMoved (MouseEvent e)
+    {
+        xpos = e.getX (); //track mouse x movement
+        ypos = e.getY (); //track mouse y movement
+    }
+
+
+    public void mouseDragged (MouseEvent e)
+    {
+
+    }
+
+
+    //MOUSE ACTIONS
+    public void mouseClicked (MouseEvent e)
+    {
+        if (shipMenu == true && xpos > 200 && xpos < 315 && ypos > 600 && ypos < 760) //choose original ship
+        {
+            ship = 1;
+            shipMenu = false; //closes menu
+        }
+
+        if (shipMenu == true && xpos > 350 && xpos < 470 && ypos > 620 && ypos < 740) //millenium falcon
+        {
+            ship = 0;
+            shipMenu = false;
+        }
+
+        if (shipMenu == true && xpos > 520 && xpos < 620 && ypos > 620 && ypos < 715) //x-wing
+        {
+            ship = 2;
+            shipMenu = false;
+        }
+
+        if (start == 1 && gameover == false)
+        {
+            if (ammo > 0)
+            {
+                //SHOOT LASER
+                blastersfx.play ();
+
+                j++;
+
+                if (j > 10)
+                {
+                    j = 0;
+                }
+
+                ammo = 10 - j;
+
+                Lvisible [j] = true;
+
+                //initialize positions
+                Lx [j] = xpos + 30;
+                Ly [j] = ypos;
+            }
+        }
+
+        if (gameover == true)
+        {
+            if (xpos > 570 && xpos < 680 && ypos > 470 && ypos < 550)
+            {
+                tryagain.play ();
+            }
+        }
+
+        //loop through tips
+        if (xpos > 575 && xpos < 670 && ypos > 330 && ypos < 420 && start == 0)
+        {
+            tips = tips + 1;
+        }
+    }
+
+
+
+    public void mouseEntered (MouseEvent e)
+    {
+
+    }
+
+
+    public void mouseExited (MouseEvent e)
+    {
+
+    }
+
+
+    public void mousePressed (MouseEvent e)
+    {
+
+    }
+
+
+    public void mouseReleased (MouseEvent e)
+    {
+
+    }
+
+
+    //KEYBOARD-----------------------------------------------------------------------------------------------------------------------------
+    public void keyPressed (KeyEvent key)
+    {
+
+    }
+
+
+    public void keyReleased (KeyEvent e)
+    {
+
+    }
+
+
+    public void keyTyped (KeyEvent e)
+    {
+
+    }
+
+
+    //TIMER--------------------------------------------------------------------------------------------------------------------------------
+    public void start ()
+    {
+        timer.start ();
+    }
+
+
+    public void stop ()
+    {
+        timer.stop ();
+    }
+
+
+    public void destroy ()
+    {
+        //System.exit(0);
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    public void update (Graphics g)
+    {
+        g.drawImage (backbuffer, 0, 0, this);
+    }
+
+
+    public void paint (Graphics g)
+    {
+        update (g);
+    }
+
+
+    public void actionPerformed (ActionEvent e)
+    {
+        by = by + speed;
+
+        if (by > 1600)
+        {
+            by = 0;
+        }
+
+
+        backg.drawImage (background, 0, by, 800, 800, this);
+        backg.drawImage (background, 0, by - 800, 800, 800, this);
+        backg.drawImage (background, 0, by - 1600, 800, 800, this);
+
+        if (start != 1)
+        {
+            titleMusic.loop ();
+        }
+
+        if (start == 0) //MENU
+        {
+            backg.setColor (Color.yellow);
+            Font f1 = new Font ("Harlow Solid Italic", Font.PLAIN, 40);
+            backg.setFont (f1);
+            backg.drawString ("Star Wars: The Non-Profit Game", 110, 100);
+
+            //helpful yoda
+            backg.drawImage (cloud, 505, 335, 256, 123, this);
+            backg.drawImage (yoda, 575, 330, 96, 88, this);
+
+            Font f4 = new Font ("Franklin Gothic Book", Font.ITALIC, 20);
+            backg.setFont (f4);
+
+            if (tips == 0)
+            {
+                backg.drawString ("'In the top-left corner, your AMMO", 500, 450);
+                backg.drawString ("                   beware of'", 500, 480);
+            }
+
+            if (tips == 1)
+            {
+                backg.drawString ("'Your journey becomes difficult,", 500, 450);
+                backg.drawString ("       with each barrier you surpass'", 500, 480);
+            }
+
+            if (tips == 2)
+            {
+                backg.drawString ("'Comes each ship with its own", 500, 450);
+                backg.drawString ("                endurance'", 500, 480);
+            }
+
+            if (tips == 3)
+            {
+                backg.drawString ("'Highscore you can make by", 500, 450);
+                backg.drawString ("         defeating more adversaries'", 500, 480);
+            }
+
+            if (tips == 4)
+            {
+                backg.drawString ("'Watch out for the laser,", 500, 450);
+                backg.drawString ("         warning I will give'", 500, 480);
+            }
+
+            if (tips == 5)
+            {
+                backg.drawString ("'Make sure you use protection!", 500, 450);
+                backg.drawString ("...Am talking about SHIELD ", 500, 480);
+                backg.drawString ("                 power up...'", 500, 510);
+            }
+
+            if (tips == 6)
+            {
+                backg.drawString ("'A wise jedi seeks help when", 500, 450);
+                backg.drawString ("  needed. Look out for an extra life'", 500, 480);
+            }
+
+            if (tips > 6) //loop through tips
+            {
+                tips = 0;
+            }
+
+            //oldscore displayed
+            Font f2 = new Font ("Forte", Font.PLAIN, 30);
+            backg.setFont (f2);
+            backg.drawString ("Last Run: " + oldScore, 335, 210);
+
+            backg.drawString ("Click!", 582, 310);
+
+            if (e.getSource () == button2)
+            {
+                shipMenu = true;
+            }
+
+            if (shipMenu == true) //choosing ship
+            {
+                backg.drawImage (falcon, 200, 600, 115, 160, this);
+                backg.drawImage (normalship, 350, 620, 120, 112, this);
+                backg.drawImage (xwing, 510, 620, 102, 95, this);
+            }
+
+            if (shipMenu == false) //draw chosen ship
+            {
+                if (ship == 0)
+                {
+                    backg.drawImage (normalship, 370, 250, 60, 56, this);
+                    lives = 3;
+                }
+
+                if (ship == 1)
+                {
+                    backg.drawImage (falcon, 370, 250, 58, 80, this);
+                    lives = 4;
+                }
+
+                if (ship == 2)
+                {
+                    backg.drawImage (xwing, 375, 270, 51, 48, this);
+                    lives = 2;
+                }
+            }
+
+            if (e.getSource () == button1)
+            {
+                start = 1; //game starts
+                button1.setVisible (false); //buttons dissapear
+                button2.setVisible (false);
+                button5.setVisible (false);
+                button6.setVisible (false);
+            }
+
+            if (e.getSource () == button5)
+            {
+                start = 2; //game starts
+                button1.setVisible (false); //buttons dissapear
+                button2.setVisible (false);
+                button5.setVisible (false);
+                button6.setVisible (true);
+            }
+
+        }
+
+        if (start == 2) //HIGHSCORE DISPLAY
+        {
+            //READING SCORE
+            try
+            {
+                File textFile = new File (path);
+                FileReader in = new FileReader (textFile); //reads from file
+                BufferedReader readFile = new BufferedReader (in); //reads line by line
+                String scoreReader = readFile.readLine (); //compares highscores
+
+                for (i = 0 ; i < 10 ; i++)
+                {
+                    Hscore [i] = Integer.parseInt ((scoreReader.split (":") [1])); //stores score into array
+                    Hname [i] = scoreReader.split (":") [0]; //stores names
+                    scoreReader = readFile.readLine ();
+                }
+
+                Font f2 = new Font ("Forte", Font.PLAIN, 50);
+                backg.setFont (f2);
+                backg.drawString ("Highscores", 290, 80);
+
+                Font f3 = new Font ("Forte", Font.PLAIN, 30);
+                backg.setFont (f3);
+
+                backg.drawString ("1. " + Hname [0] + ": " + Hscore [0], 300, 150);
+                backg.drawString ("2. " + Hname [1] + ": " + Hscore [1], 300, 200);
+                backg.drawString ("3. " + Hname [2] + ": " + Hscore [2], 300, 250);
+                backg.drawString ("4. " + Hname [3] + ": " + Hscore [3], 300, 300);
+                backg.drawString ("5. " + Hname [4] + ": " + Hscore [4], 300, 350);
+                backg.drawString ("6. " + Hname [5] + ": " + Hscore [5], 300, 400);
+                backg.drawString ("7. " + Hname [6] + ": " + Hscore [6], 300, 450);
+                backg.drawString ("8. " + Hname [7] + ": " + Hscore [7], 300, 500);
+                backg.drawString ("9. " + Hname [8] + ": " + Hscore [8], 300, 550);
+                backg.drawString ("10. " + Hname [9] + ": " + Hscore [9], 300, 600);
+            }
+
+            catch (IOException ee)
+            {
+                System.out.println ("Problem reading from file.");
+            }
+
+            if (e.getSource () == button6)
+            {
+                start = 0; //game starts
+                button1.setVisible (true); //buttons dissapear
+                button2.setVisible (true);
+                button5.setVisible (true);
+                button6.setVisible (false);
+            }
+        }
+
+
+        if (e.getSource () == timer)
+        {
+            if (start == 1) //GAME STARTS
+            {
+                titleMusic.stop ();
+
+                if (gameover == false)
+                {
+                    gameMusic.loop ();
+                }
+
+                if (iframe <= 0) //so iframe doesn't lose "illusion"
+                {
+                    if (ship == 0)
+                    {
+                        backg.drawImage (normalship, xpos, ypos, 60, 56, this);
+                        Srect = new Rectangle (xpos, ypos, 60, 56);
+                    }
+
+                    if (ship == 1)
+                    {
+                        backg.drawImage (falcon, xpos, ypos, 58, 80, this);
+                        Srect = new Rectangle (xpos, ypos, 58, 80);
+                    }
+
+                    if (ship == 2)
+                    {
+                        backg.drawImage (xwing, xpos, ypos, 51, 48, this);
+                        Srect = new Rectangle (xpos, ypos, 51, 48);
+                    }
+                }
+
+                iframe--; //constantly counts iframe counter down
+
+                //POWER UPS
+                //health
+                hx = hx + hxdir;
+                hy = hy + speed;
+
+                //boundaries
+                if (hx > 780)
+                {
+                    hxdir = -2;
+                }
+
+                if (hx < 20)
+                {
+                    hxdir = 2;
+                }
+
+                if (hy > 1000)
+                {
+                    hy = (int) (Math.random () * (-1000 * d) - 4000);
+                    Hvisible = true;
+                }
+
+                if (Hvisible == true && lives < 4)
+                {
+                    backg.drawImage (healthPU, hx, hy, 48, 48, this);
+                }
+
+                Hrect = new Rectangle (hx, hy, 48, 48);
+
+                if (Srect.intersects (Hrect) && Hvisible == true && gameover == false) //collision
+                {
+                    lives = lives + 1;
+                    Hvisible = false;
+                }
+
+                //shield
+                if (SHvisible == true && SHactive == false)
+                {
+                    sx = sx + sxdir;
+                    sy = sy + speed;
+
+                    //boundaries
+                    if (sx > 780)
+                    {
+                        sxdir = -2;
+                    }
+
+                    if (sx < 20)
+                    {
+                        sxdir = 2;
+                    }
+
+                    if (sy > 1000)
+                    {
+                        sy = (int) (Math.random () * (-2000 * d) - 10000);
+                    }
+
+                    backg.drawImage (shieldPU, sx, sy, 48, 48, this);
+                }
+
+                SHrect = new Rectangle (sx, sy, 48, 48);
+
+                if (Srect.intersects (SHrect) && SHvisible == true && gameover == false) //collision
+                {
+                    SHvisible = false;
+                    SHactive = true;
+                    s = 0;
+                }
+
+                if (SHactive == true) //draws shield over ship
+                {
+                    s++;
+
+                    if (s < 1000)
+                    {
+                        backg.drawImage (shield, xpos - 32, ypos - 32, 125, 126, this);
+                    }
+
+                    if (s > 1000 && s < 1500 && s % 2 == 0) //flickering to signify its almost over
+                    {
+                        backg.drawImage (shield, xpos - 32, ypos - 32, 125, 126, this);
+                    }
+
+                    if (s > 1500)
+                    {
+                        SHactive = false;
+                        SHvisible = true;
+                    }
+                }
+
+                //BG response to speed
+                if (gameover == false)
+                {
+                    if (ypos > 200)
+                    {
+                        speed = 7 + (d / 2);
+                    }
+
+                    if (ypos < 200 && ypos > 500)
+                    {
+                        speed = 5 + d;
+                    }
+
+                    if (ypos < 500 && ypos > 650)
+                    {
+                        speed = 4 + d;
+                    }
+
+                    if (ypos > 650)
+                    {
+                        speed = 3 + d;
+                    }
+                }
+
+                //score counter
+                if (gameover == false)
+                {
+                    score = score + (speed / 4);
+                }
+
+                if (score > 1000) //level up
+                {
+                    level = 2;
+                }
+
+                //LEVELS
+                if (level >= 2)  //bomb
+                {
+                    bombx = bombx - (speed + 2);
+                    bomby = bomby + (speed + 2);
+
+                    if (bombx < -100)
+                    {
+                        Bvisible = true;
+                        bombx = (int) (Math.random () * 1000 + 1300);
+                    }
+
+                    if (bomby > 800)
+                    {
+                        bomby = (int) (Math.random () * -200 - 200);
+                    }
+
+                    backg.drawImage (bomber, bombx, bomby, 108, 86, this);
+                }
+
+                if (score > 3000)
+                {
+                    level = 3;
+                }
+
+                if (level >= 3)
+                {
+                    ELtimer++;
+
+                    if (ELdown == true)
+                    {
+                        ELy++;
+                    }
+
+                    if (ELdown == false)
+                    {
+                        ELy--;
+                    }
+
+                    if (ELy > 650) //moving up
+                    {
+                        ELdown = false;
+                    }
+
+                    if (ELy < 150) //moving down
+                    {
+                        ELdown = true;
+                    }
+
+                    if (ELtimer > 200 && ELtimer < 300)
+                    {
+                        backg.drawImage (warning, 700, 75, 64, 64, this);
+                    }
+                    if (ELtimer < 300) //charge
+                    {
+                        backg.drawImage (laserRcharge, 754, ELy, 46, 50, this);
+                        backg.drawImage (laserLcharge, 0, ELy, 46, 50, this);
+                    }
+
+                    if (ELtimer > 300 && ELtimer < 500) //fire
+                    {
+                        backg.drawImage (laserRfire, 751, ELy, 49, 50, this);
+                        backg.drawImage (laserLfire, 0, ELy, 49, 50, this);
+                        backg.drawImage (Elaser, 40, ELy + 20, 720, 10, this);
+
+                        ELfire = true;
+                        lasersfx.loop ();
+                    }
+
+                    if (ELtimer > 500) //cooldown
+                    {
+                        backg.drawImage (laserRcharge, 754, ELy, 46, 50, this);
+                        backg.drawImage (laserLcharge, 0, ELy, 46, 50, this);
+
+                        ELfire = false;
+                        lasersfx.stop ();
+                    }
+
+                    if (ELtimer > 800) //reset process
+                    {
+                        ELtimer = 0;
+                    }
+                }
+
+                if (score > 4000)
+                {
+                    d = 1;
+                }
+
+                if (score > 5000)
+                {
+                    d = 2;
+                }
+
+                if (score > 6000)
+                {
+                    d = 3;
+                }
+
+                if (score > 7000)
+                {
+                    d = 4;
+                }
+
+                if (score > 8000)
+                {
+                    d = 5;
+                }
+
+                if (score > 9000)
+                {
+                    d = 6;
+                }
+
+                level = level + d;
+
+                //SHIP BOUNDARIES
+                if (xpos > 740)
+                {
+                    xpos = 740;
+                }
+
+                if (ypos > 720)
+                {
+                    ypos = 720;
+                }
+
+                //LASER COLLISION
+                ELrect = new Rectangle (40, ELy + 20, 720, 10);
+
+                if (Srect.intersects (ELrect) && ELfire == true && iframe < 0 && gameover == false && SHactive == false)
+                {
+                    lives = lives - 1;
+                    iframe = 50;
+                }
+
+                if (Srect.intersects (ELrect) && ELfire == true && iframe < 0 && gameover == false && SHactive == true) //shield
+                {
+                    SHactive = false;
+                    iframe = 50;
+                }
+
+                //BOMB COLLISION
+                Brect = new Rectangle (bombx, bomby, 108, 86);
+
+                if (Srect.intersects (Brect) && Bvisible == true && iframe < 0 && gameover == false && SHactive == false)
+                {
+                    Bvisible = false;
+                    lives = lives - 1;
+
+                    iframe = 50;
+                }
+
+                if (Srect.intersects (Brect) && Bvisible == true && iframe < 0 && gameover == false && SHactive == true) //shield
+                {
+                    Bvisible = false;
+                    SHactive = false;
+                    iframe = 50;
+                }
+
+                //TIE FIGHTER ARRAY
+                for (t = 0 ; t < (7 + (2 * d)) ; t++)
+                {
+                    Ty [t] = Ty [t] + (speed + 1);
+
+                    //draw
+                    if (Tvisible [t] == true)
+                    {
+                        backg.drawImage (tie, Tx [t], Ty [t], 45, 66, this);
+                    }
+
+                    if (Ty [t] > 0 && gameover == false)
+                    {
+                        TFsfx.loop ();
+                    }
+
+                    if (Ty [t] > 1500)
+                    {
+                        Tx [t] = (int) (Math.random () * 550 + 150);
+                        Ty [t] = (int) (Math.random () * -550 - 150);
+                        Tvisible [t] = true;
+                    }
+
+                    //collision
+                    Trect [t] = new Rectangle (Tx [t], Ty [t], 45, 66); //tie fighter collision box
+
+                    //colliding with ship (and tie figher)
+                    if (Srect.intersects (Trect [t]) && Tvisible [t] == true && iframe < 0 && gameover == false && SHactive == false)
+                    {
+                        Tvisible [t] = false;
+                        lives = lives - 1;
+                        iframe = 50;
+                    }
+
+                    if (Srect.intersects (Trect [t]) && Tvisible [t] == true && iframe < 0 && gameover == false && SHactive == true) //shield
+                    {
+                        Tvisible [t] = false;
+                        SHactive = false;
+                        iframe = 50;
+                    }
+
+                    if (Tvisible [t] == false) //draw explosion
+                    {
+                        backg.drawImage (texplosion, Tx [t] - 10, Ty [t], 68, 68, this);
+                    }
+                }
+
+                //LASER
+                for (i = 0 ; i < 15 ; i++)
+                {
+                    if (Lvisible [i] == true)
+                    {
+                        Ly [i] -= 2;
+                        backg.drawImage (laser, Lx [i], Ly [i], 9, 8, this);
+                        Lrect [i] = new Rectangle (Lx [i], Ly [i], 9, 8); //laser collision box
+
+                        if (Ly [i] < -10)
+                        {
+                            Lvisible [i] = false;
+                        }
+                        for (t = 0 ; t < 7 ; t++)
+                        {
+                            //colliding with tie fighter (and laser)
+                            if (Lrect [i].intersects (Trect [t]) && Tvisible [t] == true && gameover == false)
+                            {
+                                Lvisible [i] = false;
+                                Tvisible [t] = false;
+                                score = score + 50;
+                            }
+
+                            if (Tvisible [t] == false) //draw explosion
+                            {
+                                backg.drawImage (texplosion, Tx [t] - 10, Ty [t], 68, 68, this);
+                            }
+                        }
+                    }
+                }
+
+                if (iframe > 0) //draw iframe animation
+                {
+                    if (ship == 0)
+                    {
+                        backg.drawImage (normalshipI, xpos, ypos, 60, 56, this);
+                    }
+
+                    if (ship == 1)
+                    {
+                        backg.drawImage (falconI, xpos, ypos, 58, 80, this);
+                    }
+
+                    if (ship == 2)
+                    {
+                        backg.drawImage (xwingI, xpos, ypos, 51, 48, this);
+                    }
+                }
+
+                //HEADER
+                backg.setColor (Color.black);
+                backg.fillRect (0, 0, 800, 40);
+
+                Font f2 = new Font ("Forte", Font.PLAIN, 25);
+                backg.setFont (f2);
+                backg.setColor (Color.yellow);
+                backg.drawString ("LVL " + level, 300, 30);
+                backg.drawString ("Score: " + score, 650, 30);
+                backg.drawString ("Ammo: " + ammo, 20, 30);
+
+                if (ammo <= 0) //cooldown
+                {
+                    k += 2;
+
+                    backg.fillRect (125, 10, (k / 4), 25);
+
+                    if (k > 500)
+                    {
+                        ammo = 10;
+                        k = 0;
+                    }
+                }
+
+                //drawing lives
+                if (lives == 4)
+                {
+                    backg.drawImage (hearts, 420, 10, 24, 20, this);
+                    backg.drawImage (hearts, 450, 10, 24, 20, this);
+                    backg.drawImage (hearts, 480, 10, 24, 20, this);
+                    backg.drawImage (hearts, 510, 10, 24, 20, this);
+                }
+
+                if (lives == 3)
+                {
+                    backg.drawImage (hearts, 420, 10, 24, 20, this);
+                    backg.drawImage (hearts, 450, 10, 24, 20, this);
+                    backg.drawImage (hearts, 480, 10, 24, 20, this);
+                }
+
+                if (lives == 2)
+                {
+                    backg.drawImage (hearts, 420, 10, 24, 20, this);
+                    backg.drawImage (hearts, 450, 10, 24, 20, this);
+                }
+
+                if (lives == 1)
+                {
+                    backg.drawImage (hearts, 420, 10, 24, 20, this);
+                }
+
+                if (lives == 0)
+                {
+                    gameover = true;
+                }
+
+                if (SHactive == true)
+                {
+                    backg.drawImage (shield, 575, 8, 30, 30, this);
+                }
+            }
+
+            //GAME OVER
+            if (gameover == true)
+            {
+                speed = 1;
+                gameMusic.stop ();
+                TFsfx.stop ();
+                lasersfx.stop ();
+                ELtimer = 0;
+
+                if (score < 10000)
+                {
+                    gameoverMusic.play ();
+                    windsfx.loop ();
+                }
+                
+                if (score > 10000) //bonus
+                {
+                    astro.play ();
+                }
+                
+                oldScore = score;
+
+                //yoda's words of encouragement
+                backg.drawImage (cloud, 500, 475, 256, 123, this);
+                backg.drawImage (yoda, 570, 470, 96, 88, this);
+
+                Font f4 = new Font ("Franklin Gothic Book", Font.ITALIC, 20);
+                backg.setFont (f4);
+                backg.drawString ("'Do or do not, there is no try.'", 500, 580);
+
+                ship = 4; //no ship shows up
+
+                Font f3 = new Font ("Forte", Font.PLAIN, 50);
+                backg.setFont (f3);
+                backg.drawString ("Game Over...", 275, 300);
+                backg.drawString ("Final Score: " + score, 225, 350);
+
+                //READING SCORE
+                try
+                {
+                    File textFile = new File (path);
+                    FileReader in = new FileReader (textFile); //reads from file
+                    BufferedReader readFile = new BufferedReader (in); //reads line by line
+                    String scoreReader = readFile.readLine (); //compares highscores
+
+                    for (i = 0 ; i < 10 ; i++)
+                    {
+                        Hscore [i] = Integer.parseInt ((scoreReader.split (":") [1])); //stores score into array
+                        Hname [i] = scoreReader.split (":") [0]; //stores names
+                        scoreReader = readFile.readLine ();
+                    }
+
+                    for (i = 0 ; i < 10 ; i++)
+                    {
+                        if (score > Hscore [i])
+                        {
+                            for (j = 8 ; j >= i ; j--)
+                            {
+                                Hscore [j + 1] = Hscore [j]; //moves previous scores down
+                                Hname [j + 1] = Hname [j];
+                            }
+
+                            Hscore [i] = score; //score is added to array
+
+                            //prompt for name entry
+                            Font f2 = new Font ("Forte", Font.PLAIN, 25);
+                            backg.setFont (f2);
+                            backg.drawString ("Enter Nickname: ", 200, 400);
+
+                            prompt.setVisible (true); //name entry visible
+                            button3.setVisible (true); //enter visible
+
+                            //records nickname
+                            name = prompt.getText ();
+
+                            if (name.equals (""))
+                            {
+                                name = ("???");
+                            }
+
+                            Hname [i] = name; //records name into array
+
+                            i = 11; //stops timer by storing values out of bounds
+                        }
+
+                        button4.setVisible (true);
+                    }
+                }
+
+                catch (IOException ee)
+                {
+                    System.out.println ("Problem reading from file.");
+                }
+            }
+
+            repaint ();
+        }
+
+        //WRITING SCORE
+        if (e.getSource () == button3)
+        {
+            try
+            {
+                File dataFile = new File (path);
+                FileWriter out = new FileWriter (dataFile);
+                BufferedWriter writeFile = new BufferedWriter (out);
+
+                for (i = 0 ; i < 10 ; i++)
+                {
+                    writeFile.write (Hname [i] + ":" + String.valueOf (Hscore [i]));
+                    writeFile.newLine ();
+                }
+
+                writeFile.close ();
+                out.close ();
+
+                button3.setVisible (false);
+                prompt.setVisible (false);
+            }
+
+            catch (IOException ee)
+            {
+                System.out.println ("There is a problem writing to the file");
+            }
+        }
+
+        if (e.getSource () == button4) //retry
+        {
+            gameover = false;
+            gameoverMusic.stop ();
+            windsfx.stop ();
+
+            //reset all variables to initial position
+            score = 0;
+            start = 0;
+            i = 0;
+            d = 0;
+            ELtimer = 0;
+            ELfire = false;
+            ship = 0;
+            level = 1;
+            ammo = 10;
+            tips = (int) (Math.random () * 7);
+
+            hy = -2000;
+            sy = -10000;
+
+            for (t = 0 ; t < 7 ; t++) //initialize position of tie fighters
+            {
+                Tx [t] = (int) (Math.random () * 550 + 150);
+                Ty [t] = (int) (Math.random () * -400 - 600);
+                Tvisible [t] = true;
+            }
+
+            button4.setVisible (false);
+            button1.setVisible (true);
+            button2.setVisible (true);
+            button5.setVisible (true);
+            button3.setVisible (false);
+            prompt.setVisible (false);
+        }
+    }
+}
