@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.applet.*;
 import java.io.*;
 
-public class Final_ProjectSCORE extends Applet implements ActionListener, KeyListener, MouseMotionListener, MouseListener
+public class CLASSNAME extends Applet implements ActionListener, KeyListener, MouseMotionListener, MouseListener
 {
     //CHANGE THIS TO THE FOLDER'S ADDRESS IN ORDER TO SAVE SCORE
     String path = " ";
