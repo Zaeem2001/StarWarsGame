@@ -26,7 +26,7 @@ The set up for this project is fairly easy:
 1. Run the program to open up an applet window that will display the game.
 
 2. The first thing you'll see is the menu screen
-   <img src="C:/Users/zaeem/Downloads/menu.png" alt:"menu"> 
+   <img src="Downloads/menu.png"> 
 
 
 
