@@ -42,4 +42,4 @@ The set up for this project is fairly easy:
 
 8. Once you run out of lives it's game over. You'll be taken to a screen where you can enter your highscore (if you made one). Yoda will give you some words of encouragement and ask if you'd like to play again which will take you to the main menu.
 
-
+### Visit [my website](https://zaeem2001.github.io/projects/starwarsgame.html) to see my project in action!
