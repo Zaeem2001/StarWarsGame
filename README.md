@@ -5,6 +5,8 @@
 
 This project was submitted as my final assignment for my grade 12 computer programming class. It was my first ever experience with programming and a lot of it was self-taught, quick-and-easy fixes, hence why the code looks... like that. It was developed in Java using multiple libraries centered around graphical user interface. The project itself is an old school, Galaga-type shooter game with a Star Wars theme. Despite the poor code, the game plays very well and to this day I'm proud of what I accomplished and wanted to share it with others. 
 
+-----
+
 ### Set Up
 
 The set up for this project is fairly easy:
@@ -20,6 +22,8 @@ The set up for this project is fairly easy:
 4. Open the game's code and at the very beginning edit the CLASSNAME and the "path" variable.
    - change the CLASSNAME to match the name of the class you created with your IDE
    - change the "path" to the address of the "highscore.txt" file in the folder in which the game is saved.
+
+-----
 
 ### How to Play
 
@@ -41,5 +45,7 @@ The set up for this project is fairly easy:
 7. There are 2 power-ups that will be floating around during the game: a health orb which grants you an extra life, and a shield orb which grants invulnerability for a limited time. Going out of your way to grab them could either extend your run or end it...
 
 8. Once you run out of lives it's game over. You'll be taken to a screen where you can enter your highscore (if you made one). Yoda will give you some words of encouragement and ask if you'd like to play again which will take you to the main menu.
+
+-----
 
 ### Visit [my website](https://zaeem2001.github.io/projects/starwarsgame.html) to see my project in action!
